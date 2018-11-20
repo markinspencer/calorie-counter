@@ -1,3 +1,4 @@
+import * as R from "ramda";
 import hh from "hyperscript-helpers";
 import { h } from "virtual-dom";
 import {
@@ -7,7 +8,69 @@ import {
   saveMealAction
 } from "./update";
 
-const { pre, div, h1, button, form, label, input } = hh(h);
+const {
+  pre,
+  div,
+  h1,
+  button,
+  form,
+  label,
+  input,
+  table,
+  thead,
+  th,
+  tbody,
+  tr,
+  td
+} = hh(h);
+
+const cell = (tag, className, value) => {
+  return tag({ className }, value);
+};
+
+const mealRow = (className, meal) => {
+  const { description, calories } = meal;
+  return tr({ className }, [
+    cell(td, "pa2 tl", description),
+    cell(td, "pa2 tr", calories)
+  ]);
+};
+
+const totalRow = meals => {
+  const calorieList = R.map(meal => meal.calories, meals);
+  const calories = R.reduce((acc, calories) => acc + calories, 0, calorieList);
+
+  return tr({}, [
+    cell(td, "pa2 tr b bt", "Total:"),
+    cell(td, "pa2 tr b bt", calories)
+  ]);
+};
+
+const mealsBody = (className, meals) => {
+  const rows = R.map(R.partial(mealRow, ["stripe-dark"]), meals);
+  return tbody({ className }, [rows, totalRow(meals)]);
+};
+
+const headerRow = () => {
+  return tr({ className: "" }, [
+    cell(th, "pa2 tl", "Meal"),
+    cell(th, "pa2 tr", "Calories")
+  ]);
+};
+
+const mealsHeader = () => thead({ className: "bg-gray white" }, headerRow());
+
+const mealsTable = model => {
+  const { meals } = model;
+
+  if (meals.length)
+    return table({ className: "mw6 collapse w-100 center ma2" }, [
+      mealsHeader(),
+      mealsBody("", meals)
+    ]);
+
+  return null;
+};
 
 const buttonSet = dispatch => {
   return div([
@@ -77,6 +140,7 @@ const view = (dispatch, model) => {
   return div({ className: "mw6 center" }, [
     h1({ className: "f2 pv2 bb" }, "Calorie Counter"),
     formView(dispatch, model),
+    mealsTable(model),
     pre(JSON.stringify(model, null, 2))
   ]);
 };
