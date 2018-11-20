@@ -5,7 +5,9 @@ import {
   showFormAction,
   mealInputAction,
   caloriesInputAction,
-  saveMealAction
+  saveMealAction,
+  deleteMealAction,
+  editMealAction
 } from "./update";
 
 const {
@@ -21,18 +23,29 @@ const {
   th,
   tbody,
   tr,
-  td
+  td,
+  i
 } = hh(h);
 
 const cell = (tag, className, value) => {
   return tag({ className }, value);
 };
 
-const mealRow = (className, meal) => {
+const mealRow = (dispatch, className, meal) => {
   const { description, calories } = meal;
   return tr({ className }, [
     cell(td, "pa2 tl", description),
-    cell(td, "pa2 tr", calories)
+    cell(td, "pa2 tr", calories),
+    cell(td, "pa2 tr", [
+      i({
+        className: "ph1 fa fa-trash-o pointer",
+        onclick: () => dispatch(deleteMealAction(meal.id))
+      }),
+      i({
+        className: "ph1 fa fa-pencil-square-o pointer",
+        onclick: () => dispatch(editMealAction(meal.id))
+      })
+    ])
   ]);
 };
 
@@ -44,34 +57,36 @@ const totalRow = meals => {
 
   return tr({}, [
     cell(td, "pa2 tr b bt", "Total:"),
-    cell(td, "pa2 tr b bt", calories)
+    cell(td, "pa2 tr b bt", calories),
+    cell(td, "bt", "")
   ]);
 };
 
-const mealsBody = (className, meals) => {
-  const rows = R.map(R.partial(mealRow, ["stripe-dark"]), meals);
-  return tbody({ className }, [rows, totalRow(meals)]);
+const mealsBody = (dispatch, className, meals) => {
+  const rows = R.map(R.partial(mealRow, [dispatch, "stripe-dark"]), meals);
+  const total = totalRow(meals);
+
+  return tbody({ className }, [rows, total]);
 };
 
 const headerRow = () => {
   return tr({ className: "" }, [
     cell(th, "pa2 tl", "Meal"),
-    cell(th, "pa2 tr", "Calories")
+    cell(th, "pa2 tr", "Calories"),
+    cell(th, "", "")
   ]);
 };
 
 const mealsHeader = () => thead({ className: "bg-gray white" }, headerRow());
 
-const mealsTable = model => {
-  const { meals } = model;
+const mealsTable = (dispatch, meals) => {
+  if (meals.length === 0)
+    return div({ className: "mv2 i black-50" }, "No meals to display...");
 
-  if (meals.length)
-    return table({ className: "mw6 collapse w-100 center ma2" }, [
-      mealsHeader(),
-      mealsBody("", meals)
-    ]);
-
-  return null;
+  return table({ className: "mw6 collapse w-100 center mv2" }, [
+    mealsHeader(),
+    mealsBody(dispatch, "", meals)
+  ]);
 };
 
 const buttonSet = dispatch => {
@@ -101,6 +116,7 @@ const fieldSet = (labelText, inputValue, oninput) => {
       className: "pa2 input-reset ba w-100 mb2",
       type: "text",
       value: inputValue,
+      id: "mealInput",
       oninput
     })
   ]);
@@ -139,11 +155,12 @@ const formView = (dispatch, model) => {
 };
 
 const view = (dispatch, model) => {
+  const { meals } = model;
   return div({ className: "mw6 center" }, [
     h1({ className: "f2 pv2 bb" }, "Calorie Counter"),
     formView(dispatch, model),
-    mealsTable(model),
-    pre(JSON.stringify(model, null, 2))
+    mealsTable(dispatch, meals)
+    //,pre(JSON.stringify(model, null, 2)) // Only for development
   ]);
 };
 
