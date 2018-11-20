@@ -8,8 +8,8 @@ function app(initModel, update, view, node) {
 
   node.appendChild(rootNode);
 
-  function dispatch(msg) {
-    model = update(msg, model);
+  function dispatch(action) {
+    model = update(action, model);
     const updatedView = view(dispatch, model);
     const patches = diff(currentView, updatedView);
     rootNode = patch(rootNode, patches);
