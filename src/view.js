@@ -1,6 +1,6 @@
 import hh from "hyperscript-helpers";
 import { h } from "virtual-dom";
-import { showFormMessage } from "./update";
+import { showFormAction, mealInputAction, caloriesInputAction } from "./update";
 
 const { pre, div, h1, button, form, label, input } = hh(h);
 
@@ -17,20 +17,21 @@ function buttonSet(dispatch) {
       {
         className: "f3 pv2 ph3 bg-grey black bn dim pointer",
         type: "submit",
-        onclick: () => dispatch(showFormMessage(false))
+        onclick: () => dispatch(showFormAction(false))
       },
       "Cancel"
     )
   ]);
 }
 
-function fieldSet(labelText, inputValue) {
+function fieldSet(labelText, inputValue, oninput) {
   return div([
     label({ className: "db mb1" }, labelText),
     input({
       className: "pa2 input-reset ba w-100 mb2",
       type: "text",
-      value: inputValue
+      value: inputValue,
+      oninput
     })
   ]);
 }
@@ -40,15 +41,19 @@ function formView(dispatch, model) {
 
   if (showForm)
     return form({ className: "w-100 mv2" }, [
-      fieldSet("Meal", description),
-      fieldSet("Calories", calories || ""),
+      fieldSet("Meal", description, e =>
+        dispatch(mealInputAction(e.target.value))
+      ),
+      fieldSet("Calories", calories || "", e =>
+        dispatch(caloriesInputAction(e.target.value))
+      ),
       buttonSet(dispatch)
     ]);
 
   return button(
     {
       className: "f3 pv2 ph3 bg-blue white bn",
-      onclick: () => dispatch(showFormMessage(true))
+      onclick: () => dispatch(showFormAction(true))
     },
     "Add Meal"
   );
