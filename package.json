@@ -5,7 +5,7 @@
   "scripts": {
     "start": "webpack-dev-server --open"
   },
-  "author": "Spencer Markin",
+  "author": "Wilton Ngo",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
