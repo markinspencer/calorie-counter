@@ -3,7 +3,8 @@ import * as R from "ramda";
 const ACTIONS = {
   SHOW_FORM: "SHOW_FORM",
   MEAL_INPUT: "MEAL_INPUT",
-  CALORIES_INPUT: "CALORIES_INPUT"
+  CALORIES_INPUT: "CALORIES_INPUT",
+  SAVE_MEAL: "SAVE_MEAL"
 };
 
 export function showFormAction(showForm) {
@@ -27,6 +28,10 @@ export function caloriesInputAction(calories) {
   };
 }
 
+export const saveMealAction = {
+  type: ACTIONS.SAVE_MEAL
+};
+
 function update(action, model) {
   switch (action.type) {
     case ACTIONS.SHOW_FORM:
@@ -45,9 +50,27 @@ function update(action, model) {
 
       return { ...model, calories };
 
+    case ACTIONS.SAVE_MEAL:
+      return add(model);
+
     default:
       return model;
   }
+}
+
+function add(model) {
+  const { nextId, description, calories } = model;
+  const meal = { id: nextId, description, calories };
+  const meals = [...model.meals, meal];
+
+  return {
+    ...model,
+    meals,
+    nextId: nextId + 1,
+    description: "",
+    calories: 0,
+    showForm: false
+  };
 }
 
 export default update;
