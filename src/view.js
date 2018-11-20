@@ -9,7 +9,7 @@ import {
 
 const { pre, div, h1, button, form, label, input } = hh(h);
 
-function buttonSet(dispatch) {
+const buttonSet = dispatch => {
   return div([
     button(
       {
@@ -27,9 +27,9 @@ function buttonSet(dispatch) {
       "Cancel"
     )
   ]);
-}
+};
 
-function fieldSet(labelText, inputValue, oninput) {
+const fieldSet = (labelText, inputValue, oninput) => {
   return div([
     label({ className: "db mb1" }, labelText),
     input({
@@ -39,9 +39,9 @@ function fieldSet(labelText, inputValue, oninput) {
       oninput
     })
   ]);
-}
+};
 
-function formView(dispatch, model) {
+const formView = (dispatch, model) => {
   const { description, calories, showForm } = model;
 
   if (showForm)
@@ -71,14 +71,14 @@ function formView(dispatch, model) {
     },
     "Add Meal"
   );
-}
+};
 
-function view(dispatch, model) {
+const view = (dispatch, model) => {
   return div({ className: "mw6 center" }, [
     h1({ className: "f2 pv2 bb" }, "Calorie Counter"),
     formView(dispatch, model),
     pre(JSON.stringify(model, null, 2))
   ]);
-}
+};
 
 export default view;

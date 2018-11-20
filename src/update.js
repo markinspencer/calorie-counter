@@ -7,32 +7,32 @@ const ACTIONS = {
   SAVE_MEAL: "SAVE_MEAL"
 };
 
-export function showFormAction(showForm) {
+export const showFormAction = showForm => {
   return {
     type: ACTIONS.SHOW_FORM,
     showForm
   };
-}
+};
 
-export function mealInputAction(description) {
+export const mealInputAction = description => {
   return {
     type: ACTIONS.MEAL_INPUT,
     description
   };
-}
+};
 
-export function caloriesInputAction(calories) {
+export const caloriesInputAction = calories => {
   return {
     type: ACTIONS.CALORIES_INPUT,
     calories
   };
-}
+};
 
 export const saveMealAction = {
   type: ACTIONS.SAVE_MEAL
 };
 
-function update(action, model) {
+const update = (action, model) => {
   switch (action.type) {
     case ACTIONS.SHOW_FORM:
       const { showForm } = action;
@@ -56,9 +56,9 @@ function update(action, model) {
     default:
       return model;
   }
-}
+};
 
-function add(model) {
+const add = model => {
   const { nextId, description, calories } = model;
   const meal = { id: nextId, description, calories };
   const meals = [...model.meals, meal];
@@ -71,6 +71,6 @@ function add(model) {
     calories: 0,
     showForm: false
   };
-}
+};
 
 export default update;
