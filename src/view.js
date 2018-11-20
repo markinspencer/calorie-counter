@@ -37,8 +37,10 @@ const mealRow = (className, meal) => {
 };
 
 const totalRow = meals => {
-  const calorieList = R.map(meal => meal.calories, meals);
-  const calories = R.reduce((acc, calories) => acc + calories, 0, calorieList);
+  const calories = R.pipe(
+    R.map(meal => meal.calories),
+    R.sum
+  )(meals);
 
   return tr({}, [
     cell(td, "pa2 tr b bt", "Total:"),
